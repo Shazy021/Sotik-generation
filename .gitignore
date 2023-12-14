@@ -1,5 +1,6 @@
 venv/
 __pycache__/
+data_base/__pycache__/
 handlers/__pycache__/
 keyboards/__pycache__/
 .env
