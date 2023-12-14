@@ -5,7 +5,24 @@ from pyspark.sql import SparkSession
 
 
 class PostgreDB:
+    """
+    A class for connecting to PostgreSQL database using PySpark.
+
+    Attributes:
+        spark (pyspark.sql.SparkSession): A SparkSession object for creating connections to Spark.
+        DB_USER (str): The username for the PostgreSQL database.
+        DB_IP (str): The IP address for the PostgreSQL database.
+        DB_PASSWORD (str): The password for the PostgreSQL database.
+
+    Methods:
+        __init__(): Initialize the PostgreDB object and establish a connection to the database.
+        validate_connection(table_name: str) -> bool: Validate the connection to the database by loading the given table.
+    """
+
     def __init__(self):
+        """
+        Initialize the PostgreDB object and establish a connection to the database.
+        """
         load_dotenv()
         init(autoreset=True)
         try:
@@ -27,6 +44,17 @@ class PostgreDB:
             exit()
 
     def validate_connection(self, table_name: str) -> bool:
+        """
+        Validate the connection to the PostgreSQL database by loading the given table.
+
+        Args:
+            table_name (str): The name of the table to validate the connection.
+
+        Returns:
+            bool: True if the connection is successful, False otherwise.
+
+            This class connection on server
+        """
         try:
             self.spark.read \
                 .format('jdbc') \
