@@ -10,7 +10,7 @@ menu_markup = InlineKeyboardMarkup(
     ]
 )
 
-back_to_menu = KeyboardButton(text='/start')
+back_to_menu = KeyboardButton(text='/start_menu')
 to_menu = ReplyKeyboardMarkup(
     keyboard=[
         [back_to_menu]
