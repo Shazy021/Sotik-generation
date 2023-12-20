@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from colorama import init, Fore
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame
 
 
 class PostgreDB:
@@ -66,3 +66,22 @@ class PostgreDB:
             return True
         except:
             return False
+
+    def get_table(self, table_name: str) -> DataFrame:
+        """
+        Retrieve a table from the PostgreSQL database and return it as a DataFrame.
+
+        Args:
+            table_name (str): The name of the table to retrieve.
+
+        Returns:
+            DataFrame: The DataFrame containing the data from the specified table.
+        """
+        df = self.spark.read \
+            .format('jdbc') \
+            .option("url", f"jdbc:postgresql://{self.DB_IP}/tbot_test") \
+            .option("dbtable", table_name) \
+            .option("user", self.DB_USER) \
+            .option("password", self.DB_PASSWORD) \
+            .load()
+        return df
