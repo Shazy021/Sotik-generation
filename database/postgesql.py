@@ -7,16 +7,6 @@ from pyspark.sql import SparkSession, DataFrame
 class PostgreDB:
     """
     A class for connecting to PostgreSQL database using PySpark.
-
-    Attributes:
-        spark (pyspark.sql.SparkSession): A SparkSession object for creating connections to Spark.
-        DB_USER (str): The username for the PostgreSQL database.
-        DB_IP (str): The IP address for the PostgreSQL database.
-        DB_PASSWORD (str): The password for the PostgreSQL database.
-
-    Methods:
-        __init__(): Initialize the PostgreDB object and establish a connection to the database.
-        validate_connection(table_name: str) -> bool: Validate the connection to the database by loading the given table.
     """
 
     def __init__(self):
@@ -47,13 +37,10 @@ class PostgreDB:
         """
         Validate the connection to the PostgreSQL database by loading the given table.
 
-        Args:
-            table_name (str): The name of the table to validate the connection.
-
-        Returns:
-            bool: True if the connection is successful, False otherwise.
-
-            This class connection on server
+        :param table_name: The name of the table to validate the connection.
+        :type table_name: str
+        :return: True if the connection is successful, False otherwise.
+        :rtype: bool
         """
         try:
             self.spark.read \
@@ -71,11 +58,10 @@ class PostgreDB:
         """
         Retrieve a table from the PostgreSQL database and return it as a DataFrame.
 
-        Args:
-            table_name (str): The name of the table to retrieve.
-
-        Returns:
-            DataFrame: The DataFrame containing the data from the specified table.
+        :param table_name: The name of the table to retrieve.
+        :type table_name: str
+        :return: The DataFrame containing the data from the specified table.
+        :rtype: DataFrame
         """
         df = self.spark.read \
             .format('jdbc') \
