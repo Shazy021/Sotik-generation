@@ -3,5 +3,6 @@ __pycache__/
 database/__pycache__/
 handlers/__pycache__/
 keyboards/__pycache__/
+reports/__pychahe__/
 data/charts/
 .env
