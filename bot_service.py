@@ -2,6 +2,9 @@ import os
 import requests
 from colorama import init, Fore
 from dotenv import load_dotenv
+import findspark
+
+findspark.init()
 
 
 class BotService:
