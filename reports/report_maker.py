@@ -128,7 +128,7 @@ class ReportGenerator:
 
     def create_last_month_report(self) -> list[str, str, str]:
         """
-        Creates a report for the last week in the data and returns a list of the file names of the generated charts.
+        Creates a report for the last month in the data and returns a list of the file names of the generated charts.
 
         :return: List of file names of the generated charts
         """
@@ -137,6 +137,21 @@ class ReportGenerator:
 
         if f'{target_date}-bmap.png' not in os.listdir('./data/charts'):
             tar_data = self.data.filter(f.date_format(f.col("time"), "yyyy-MM") == target_date)
+            self.charts_builder(target_date, tar_data)
+
+        return [f'{target_date}-countbp.png', f'{target_date}-revenuebp.png', f'{target_date}-bmap.png']
+
+    def create_last_year_report(self) -> list[str, str, str]:
+        """
+        Creates a report for the last year in the data and returns a list of the file names of the generated charts.
+
+        :return: List of file names of the generated charts
+        """
+        last_date = self.data.select(f.max("time")).first()[0].date()
+        target_date = last_date.year
+
+        if f'{target_date}-bmap.png' not in os.listdir('./data/charts'):
+            tar_data = self.data.filter(f.date_format(f.col("time"), "yyyy") == target_date)
             self.charts_builder(target_date, tar_data)
 
         return [f'{target_date}-countbp.png', f'{target_date}-revenuebp.png', f'{target_date}-bmap.png']

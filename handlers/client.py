@@ -48,7 +48,7 @@ async def process_report_command(callback: CallbackQuery):
                                )
 
 
-@dp.callback_query(lambda callback: callback.data in ['/last_day_report', '/last_month_report'])
+@dp.callback_query(lambda callback: callback.data in ['/last_day_report', '/last_month_report', '/last_year_report'])
 async def report_builder(callback: CallbackQuery):
     await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
     await callback.answer()
@@ -69,6 +69,8 @@ async def report_builder(callback: CallbackQuery):
             charts_names = rep.create_last_day_report()
         case '/last_month_report':
             charts_names = rep.create_last_month_report()
+        case '/last_year_report':
+            charts_names = rep.create_last_year_report()
 
     media = [InputMediaPhoto(media=FSInputFile(f'./data/charts/{chart_name}')) for chart_name in charts_names]
 
