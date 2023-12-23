@@ -48,14 +48,14 @@ async def process_report_command(callback: CallbackQuery):
                                )
 
 
-@dp.callback_query(lambda callback: callback.data in ['/last_day_report'])
-async def last_day_report_builder(callback: CallbackQuery):
+@dp.callback_query(lambda callback: callback.data in ['/last_day_report', '/last_month_report'])
+async def report_builder(callback: CallbackQuery):
     await bot.delete_message(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
     await callback.answer()
 
     wait_message = await bot.send_message(callback.from_user.id,
                                           f'Пожалуйста, подождите.\n'
-                                          f'Идет формирование отчета...\nПримерное время ожидания - 4 мин',
+                                          f'Идет формирование отчета...\nПримерное время ожидания - 7 мин',
                                           reply_markup=to_menu
                                           )
 
@@ -63,12 +63,18 @@ async def last_day_report_builder(callback: CallbackQuery):
                                        spark.get_table('products'),
                                        spark.get_table('buyers'))
 
-    charts_names = rep.create_last_day_report()
+    charts_names = None
+    match callback.data:
+        case '/last_day_report':
+            charts_names = rep.create_last_day_report()
+        case '/last_month_report':
+            charts_names = rep.create_last_week_report()
+
     media = [InputMediaPhoto(media=FSInputFile(f'./data/charts/{chart_name}')) for chart_name in charts_names]
 
     await bot.delete_message(chat_id=callback.message.chat.id, message_id=wait_message.message_id)
 
     await bot.send_media_group(callback.message.chat.id, media)
     await bot.send_message(callback.from_user.id,
-                           f'Вот ваш отчет за последний день.'
+                           f'Ваш отчет сформирован.'
                            )

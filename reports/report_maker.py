@@ -70,16 +70,27 @@ class ReportGenerator:
         img = Image.open(io.BytesIO(img_data))
         img.save(f'./data/charts/{file_name}.png')
 
+    def charts_builder(self, target_date: str, tar_data: DataFrame) -> None:
+        self.count_models_boxplot(tar_data, target_date, f'{target_date}-countbp')
+        self.buyers_revenue_boxplot(tar_data, target_date, f'{target_date}-revenuebp')
+        self.get_map_top_buyers(tar_data, f'{target_date}-bmap')
+
     def create_last_day_report(self) -> list[str, str, str]:
         last_date = self.data.select(f.max("time")).first()[0].date()
         target_date = last_date.strftime("%Y-%m-%d")
-        tar_data = self.data.filter(f.col("time").cast("date") == target_date)
 
-        if f'{target_date}-bmap.png' in os.listdir('./data/charts'):
-            pass
-        else:
-            self.count_models_boxplot(tar_data, target_date, f'{target_date}-countbp')
-            self.buyers_revenue_boxplot(tar_data, target_date, f'{target_date}-revenuebp')
-            self.get_map_top_buyers(tar_data, f'{target_date}-bmap')
+        if f'{target_date}-bmap.png' not in os.listdir('./data/charts'):
+            tar_data = self.data.filter(f.col("time").cast("date") == target_date)
+            self.charts_builder(target_date, tar_data)
+
+        return [f'{target_date}-countbp.png', f'{target_date}-revenuebp.png', f'{target_date}-bmap.png']
+
+    def create_last_week_report(self) -> list[str, str, str]:
+        last_date = self.data.select(f.max("time")).first()[0].date()
+        target_date = f'{last_date.year}-{last_date.month}'
+
+        if f'{target_date}-bmap.png' not in os.listdir('./data/charts'):
+            tar_data = self.data.filter(f.date_format(f.col("time"), "yyyy-MM") == target_date)
+            self.charts_builder(target_date, tar_data)
 
         return [f'{target_date}-countbp.png', f'{target_date}-revenuebp.png', f'{target_date}-bmap.png']
