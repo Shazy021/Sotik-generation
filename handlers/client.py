@@ -68,7 +68,7 @@ async def report_builder(callback: CallbackQuery):
         case '/last_day_report':
             charts_names = rep.create_last_day_report()
         case '/last_month_report':
-            charts_names = rep.create_last_week_report()
+            charts_names = rep.create_last_month_report()
 
     media = [InputMediaPhoto(media=FSInputFile(f'./data/charts/{chart_name}')) for chart_name in charts_names]
 

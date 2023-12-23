@@ -126,7 +126,7 @@ class ReportGenerator:
 
         return [f'{target_date}-countbp.png', f'{target_date}-revenuebp.png', f'{target_date}-bmap.png']
 
-    def create_last_week_report(self) -> list[str, str, str]:
+    def create_last_month_report(self) -> list[str, str, str]:
         """
         Creates a report for the last week in the data and returns a list of the file names of the generated charts.
 
