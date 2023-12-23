@@ -10,7 +10,17 @@ from folium.plugins import MarkerCluster
 
 
 class ReportGenerator:
+    """
+    The ReportGenerator class generates reports based on input DataFrames.
+    """
     def __init__(self, df_ord: DataFrame, df_prod: DataFrame, df_buy: DataFrame):
+        """
+        Initializes the ReportGenerator with three DataFrames: df_ord, df_prod, and df_buy.
+
+        :param df_ord: DataFrame containing order data.
+        :param df_prod: DataFrame containing product data.
+        :param df_buy: DataFrame containing buyer data.
+        """
         self.df_prod = df_prod.withColumnRenamed("id", "prod_id")
         self.df_buy = df_buy
 
@@ -19,6 +29,13 @@ class ReportGenerator:
             'prod_id')
 
     def count_models_boxplot(self, df: DataFrame, target_date: str, filename: str) -> None:
+        """
+        Generates a boxplot of the count of models sold for a given target date and saves it as an image file.
+
+        :param df: DataFrame containing the data for the target date
+        :param target_date: Date
+        :param filename: Name of the file to save the chart as
+        """
         models_top = df.groupby('item_id').count() \
             .join(self.df_prod, df.item_id == self.df_prod.prod_id, "left") \
             .drop('prod_id').orderBy('count', ascending=False) \
@@ -35,6 +52,13 @@ class ReportGenerator:
         plt.savefig(f'./data/charts/{filename}.png')
 
     def buyers_revenue_boxplot(self, df: DataFrame, target_date: str, filename: str) -> None:
+        """
+        Generates a boxplot of the revenue from each buyer for a given target date and saves it as an image file.
+
+        :param df: DataFrame containing the data for the target date
+        :param target_date: Date
+        :param filename: Name of the file to save the chart as
+        """
         buyers_top = df.groupby('buyers_id').agg(f.sum('price').alias('revenue')).toPandas()
         mean_value = buyers_top['revenue'].mean()
 
@@ -47,6 +71,12 @@ class ReportGenerator:
         plt.savefig(f'./data/charts/{filename}.png')
 
     def get_map_top_buyers(self, df: DataFrame, file_name: str) -> None:
+        """
+        Generates a map visualizing the top buyers based on revenue and saves it as an image file.
+
+        :param df: DataFrame containing the data for the top buyers
+        :param file_name: Name of the file to save the map as
+        """
         df = df.groupby('buyers_id').agg(f.sum('price').alias('revenue')) \
             .orderBy('revenue', ascending=False) \
             .select('buyers_id', f.format_number('revenue', 2).alias('revenue')) \
@@ -71,11 +101,22 @@ class ReportGenerator:
         img.save(f'./data/charts/{file_name}.png')
 
     def charts_builder(self, target_date: str, tar_data: DataFrame) -> None:
+        """
+        Builds all the necessary charts for a given target date and DataFrame.
+
+        :param target_date: Date
+        :param tar_data: DataFrame containing the data for the target date
+        """
         self.count_models_boxplot(tar_data, target_date, f'{target_date}-countbp')
         self.buyers_revenue_boxplot(tar_data, target_date, f'{target_date}-revenuebp')
         self.get_map_top_buyers(tar_data, f'{target_date}-bmap')
 
     def create_last_day_report(self) -> list[str, str, str]:
+        """
+        Creates a report for the last day in the data and returns a list of the file names of the generated charts.
+
+        :return: List of file names of the generated charts
+        """
         last_date = self.data.select(f.max("time")).first()[0].date()
         target_date = last_date.strftime("%Y-%m-%d")
 
@@ -86,6 +127,11 @@ class ReportGenerator:
         return [f'{target_date}-countbp.png', f'{target_date}-revenuebp.png', f'{target_date}-bmap.png']
 
     def create_last_week_report(self) -> list[str, str, str]:
+        """
+        Creates a report for the last week in the data and returns a list of the file names of the generated charts.
+
+        :return: List of file names of the generated charts
+        """
         last_date = self.data.select(f.max("time")).first()[0].date()
         target_date = f'{last_date.year}-{last_date.month}'
 
